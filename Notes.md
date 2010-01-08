@@ -78,7 +78,7 @@ $\begin{array}{lcl}
 |[ (\mu r . G_B) A |]_\sigma & = & \mu T . |[ G_B |]_{\sigma[ r \mapsto T ]} \: A
 \end{array}$
 
-Here comes the partial derivative.
+Here comes the partial derivative with respect to a character
 
 $\begin{array}{lcl}
 \partial_x (r A)        & = & r A \\
@@ -103,6 +103,10 @@ $\begin{array}{lcl}
 \delta_\varsigma (\mu r . \displaystyle\prod_{A \in N} G_A) & = &\\
 \end{array}$
 
+Partial derivative with respect to a non-terminal. These transitions
+corresponds to when we need to push the current state on the stack so that
+we know how to resume parsing when we are done parsing the non-terminal.
+
 # Dot productions
 
 # Further thoughts on the connection to LR parsing
@@ -112,7 +116,7 @@ grammar and the LR(0) automaton is somewhat convoluted. The reason is
 that it is natural only to derive with respect to a character in the
 alphabet whereas in the LR(0) automaton we also have transitions for
 non-terminals. Deriving with respect to non-terminals might be doable
-but a little bit messy. That would give us on correspondence.
+but a little bit messy. That would give us one correspondence.
 
 Another option is to change the standard LR(0) automaton to only have
 transitions for terminals. Then it would correspond more closely to
