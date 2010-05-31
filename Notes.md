@@ -5,7 +5,7 @@
 In the beginning Knuth described the LR parsing algorithm using point 
 productions to track the progress of parsing through the context free 
 grammar. I believe that this process can be described more neatly using 
-derivatives much like Brozovski (check spelling) did with regular 
+derivatives much like Brzozowski did with regular 
 expressions.
 
 In order to show this it would be nice to have a representation of 
@@ -81,13 +81,13 @@ $\begin{array}{lcl}
 Here comes the partial derivative with respect to a character
 
 $\begin{array}{lcl}
-\partial_x (r A)        & = & r A \\
 \partial_x x            & = & 1 \\
 \partial_x (y\not= x)   & = & 0 \\
 \partial_x 0            & = & 0 \\
 \partial_x 1            & = & 0 \\
 \partial_x (G \cdot H)  & = & \partial_x G \cdot H + \delta G \cdot \partial_x H \\
 \partial_x (G + H)      & = & \partial_x G + \partial_x H \\
+\partial_x (r A)        & = & r A \\
 \partial_x (\mu r . \displaystyle\prod_{A \in N} G_A)  & = & \partial_x G_A
 \end{array}$
 
@@ -97,7 +97,7 @@ $\begin{array}{lcl}
 \delta_\varsigma 1           & = & 0\\
 \delta_\varsigma (G \cdot H) & = & \delta_\varsigma G \cdot \delta_\varsigma H\\
 \delta_\varsigma (G + H)     & = & \delta_\varsigma G + \delta_\varsigma H\\
-\delta_\varsigma (T A)       & = & \delta_\varsigma T (A)\\
+\delta_\varsigma (T A)       & = & (\delta_\varsigma T) A\\
 \\
 \delta_\varsigma r & = & \\
 \delta_\varsigma (\mu r . \displaystyle\prod_{A \in N} G_A) & = &\\
@@ -106,6 +106,17 @@ $\begin{array}{lcl}
 Partial derivative with respect to a non-terminal. These transitions
 corresponds to when we need to push the current state on the stack so that
 we know how to resume parsing when we are done parsing the non-terminal.
+
+$\begin{array}{lcl}
+\partial_A x           & = & 0\\
+\partial_A 0           & = & 0\\
+\partial_A 1           & = & 0\\
+\partial_A (G \cdot H) & = & \partial_A G \cdot H + ...\\
+\partial_A (G + H)     & = & \partial_A G + \partial_A H\\
+\partial_A (r A)       & = & 1\\
+\partial_A (r B\not= A) & = & 0\\
+\partial_A (\mu r . \displaystyle\prod_{A \in N} G_A) & = & ...
+\end{array}$
 
 # Dot productions
 
