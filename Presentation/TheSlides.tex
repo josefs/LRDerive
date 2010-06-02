@@ -1,0 +1,292 @@
+%\documentclass{article}
+\documentclass{beamer}
+
+\usepackage{amsmath}
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{graphicx}
+%\usepackage[breaklinks=true,unicode=true]{hyperref}
+%\setlength{\parindent}{0pt}
+%\setlength{\parskip}{6pt plus 2pt minus 1pt}
+%\setcounter{secnumdepth}{0}
+
+\usetheme{Warsaw}
+
+\title{LR parsing is the derivative of context free grammars}
+\author{Josef Svenningsson}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{LR parsing is the derivative of context free grammars}
+
+The title says it all.
+\vfill
+\pause
+But you might not be convinced by me just saying so..
+\end{frame}
+
+\begin{frame}
+\frametitle{Jogging your brains}
+
+\begin{figure}[h]
+\centering
+\includegraphics{Brain_Runner_300.JPG}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Context Free Grammars}
+
+A context free grammar
+\vfill
+$\begin{array}{lcl} E & \rightarrow & E * B\\
+E & \rightarrow & E + B\\
+E & \rightarrow & B\\
+B & \rightarrow & 0\\
+B & \rightarrow & 1\\ 
+\end{array}$
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Formal Definition}
+
+A Context Free Grammar is a four-tuple:
+
+\begin{itemize}
+\item
+  A set of terminals $T$
+\item
+  A set of nonterminals $NT$
+\item
+  A start symbol $S \in NT$
+\item
+  A set of productions. Each production consist of:
+  \begin{itemize}
+  \item
+    A nonterminal; the head
+  \item
+    The symbol $\rightarrow$
+  \item
+    A body consisting of a sequence of terminals and nonterminals
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Semantics of a grammar}
+
+The semantics of a grammar is defined in terms of derivation
+trees.
+
+\begin{verbatim}
+         E               E
+         |               |
+        /|\             /|\
+       E * E           E + E
+      /     \         /     \
+     /|\     0       0     /|\
+    0 + 1                 1 * 0
+\end{verbatim}
+
+If a string has more than one derivation the grammar is ambiguous.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{LR parsing}
+
+\begin{itemize}
+\item
+  The most common algorithm for parsing formal languages.
+\item
+  Invented by Knuth
+\item
+  Lots of tools for generating LR parsers: YACC, Bison, Happy,
+  \ldots{}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{LR parser machine}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=8 cm]{LR_Parser.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Producing the LR automaton}
+
+Going from a grammar to an LR automaton goes via item sets.
+
+\vfill
+
+$\begin{array}{lcl} 
+\multicolumn{3}{l}{\text{Item Set 0}}\\
+E & \rightarrow & \bullet E * B\\
+E & \rightarrow & \bullet E + B\\
+E & \rightarrow & \bullet B\\
+E & \rightarrow & \bullet 0\\
+E & \rightarrow & \bullet 1\\
+\\
+\multicolumn{3}{l}{\text{Item Set 1}}\\
+B & \rightarrow & 0 \bullet\\
+\\
+\multicolumn{3}{l}{\text{Item Set 2}}\\
+B & \rightarrow & 1 \bullet\\
+\end{array}$
+\end{frame}
+
+\begin{frame}
+$\begin{array}{lcl}
+\multicolumn{3}{l}{\text{Item Set 3}}\\ E & \rightarrow & E \bullet * B\\ E & \rightarrow & E \bullet + B\\ \end{array}$
+
+\vfill
+
+Advancing the dot one step is like recognizing one character in the
+input, alternatively a whole production.
+\end{frame}
+
+\begin{frame}
+\frametitle{Item set}
+
+Each item set corresponds to a state in the LR automaton (for LR(0)
+parsers).
+\end{frame}
+
+\begin{frame}
+\frametitle{Item sets are the derivative of the context free grammar}
+
+My claim:
+
+Item sets are the derivative of the context free grammar
+\end{frame}
+
+\begin{frame}
+\frametitle{A new representation of Context Free Grammars}
+
+It's not exactly clear from the presentation of item sets that they
+correspond to some kind of derivative
+
+To demonstrate this we need a new representation of context free
+grammars
+\end{frame}
+
+\begin{frame}
+\frametitle{A new syntax for syntax}
+
+$\begin{array}{lcl} G,H \in \text{Grammar} & ::= & x \: | \: 0 \: | \: 1 \: | \: G \cdot H \: | \: G \: + \: H \: | \: T \: A\\ T \in \text{Grammar Tuples} & ::= & r \: | \: \mu r . \{ A \mapsto G \}_{A \in N} \end{array}$
+\end{frame}
+
+\begin{frame}
+\frametitle{An example grammar}
+
+$\begin{array}{lll} \mu r . \{ & E \mapsto (r E \: \text{'+'} \: r B) + (r E \: \text{'*'} \: r B) + r B ; \\ & B \mapsto 0 + 1 & \}_{\{E, B\}} \end{array}$
+\vfill
+$\begin{array}{lcl} E & \rightarrow & E * B\\ E & \rightarrow & E + B\\ E & \rightarrow & B\\ B & \rightarrow & 0\\ B & \rightarrow & 1\\ \end{array}$
+\end{frame}
+
+\begin{frame}
+\frametitle{Semantics}
+
+\begin{itemize}
+\item The current semantics I have is unfortunately not based on
+derivation trees.
+
+\item It only captures whether a grammar recognizes a language or not.
+There is no notion of ambiguity.
+
+\item $0, 1, + \: \text{and} \: *$ form a semi-group
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{The Derivative}
+
+$\begin{array}{lcl} \partial_x x & = & 1 \\ \partial_x (y\not= x) & = & 0 \\ \partial_x 0 & = & 0 \\ \partial_x 1 & = & 0 \\ \partial_x (G \cdot H) & = & \partial_x G \cdot H + \delta G \cdot \partial_x H \\ \partial_x (G + H) & = & \partial_x G + \partial_x H \\ \partial_x (r A) & = & 0 \\ \partial_x ((\mu r . \{ A \mapsto G_A\}_{A \in N}) B) & = & \mu r . \{ S \mapsto \partial_x G_B \}_{\{S\}\cup N} S \end{array}$
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Auxiliary function, empty string recognition}
+
+$\begin{array}{lcl}
+\delta x & = & 0\\
+\delta 0 & = & 1\\
+\delta 1 & = & 0\\
+\delta (G \cdot H) & = & \delta G \cdot \delta H\\
+\delta (G + H) & = & \delta G + \delta H\\
+%\delta (T A) & = & (\delta T) A\\
+\delta (r A) & = & r A\\
+\delta (\mu r . \{A \mapsto H_A\}_N A) & = & \mu r . \{ A \mapsto \delta H_A\} A
+\end{array}$
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Derivative wrt Non-terminals}
+
+$\begin{array}{lcl}
+\partial_A x & = & 0\\
+\partial_A 0 & = & 0\\
+\partial_A 1 & = & 0\\
+\partial_A (G \cdot H) & = & \partial_A G \cdot H + \delta G \cdot \partial_A H\\
+\partial_A (G + H) & = & \partial_A G + \partial_A H\\
+\partial_A (r A) & = & 1\\
+\partial_A (r B\not= A) & = & 0\\
+\partial_A (\mu r . \{B \mapsto G_B\}_N B) & = & \mu r . \{ B \mapsto \partial_A G_B \}_N B\\
+\end{array}$
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Translation}
+%\end{frame}
+
+\begin{frame}
+\frametitle{The Proof}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=100mm]{Diagram.png}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Derivatives}
+
+The intuition behind derivatives in computer science: removing one
+item
+
+\begin{itemize}
+\item
+  Data types: making one hole
+\item
+  Regular expressions: recognizing one character
+\item
+  LR parsing: recognizing one character
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Questions}
+
+Questions?
+\end{frame}
+
+\begin{frame}
+\frametitle{The sequence rule}
+
+$\partial_x (G \cdot H) = \partial_x G \cdot H + \delta G \cdot \partial_x H$
+\vfill
+$\partial_x (G \cdot H) = \partial_x G \cdot H + G \cdot \partial_x H$
+\end{frame}
+
+\end{document}
+
